@@ -242,6 +242,27 @@ extension ARAudience: AgoraRtcEngineDelegate {
 
     
    // MARK: Media Delegate Methods
+    /**
+    Reports which users are speaking, the speakers' volumes, and whether the local user is speaking.
+    - Parameters:
+        - engine: [AgoraRtcEngineKit](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html) object
+        - speakers: AgoraRtcAudioVolumeInfo array. An empty speakers array in the callback indicates that no remote user is speaking at the moment.
+            - In the local user’s callback, this array contains the following members: uid = 0, volume = totalVolume, which reports the sum of the voice volume and audio-mixing volume of the local user, and vad, which reports the voice activity status of the local user.
+            - In the remote speakers' callback, this array contains the following members: uid of each remote speaker, volume, which reports the sum of the voice volume and audio-mixing volume of each remote speaker, and vad = 0.
+        - totalVolume:Total volume after audio mixing. The value range is [0,255].
+            - In the local user’s callback, totalVolume is the sum of the voice volume and audio-mixing volume of the local user.
+            - In the remote speakers' callback, totalVolume is the sum of the voice volume and audio-mixing volume of all the remote speakers.
+     - NOTE:To enable the voice activity detection of the local user, ensure that you set `report_vad(YES)` in the `enableAudioVolumeIndication` method.
+         - Calling the [muteLocalAudioStream](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html#//api/name/enableAudioVolumeIndication:smooth:report_vad:) method affects the behavior of the SDK:
+             - If the local user calls the [muteLocalAudioStream](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html#//api/name/muteLocalAudioStream:) method, the SDK stops triggering the local user’s callback immediately.
+             - 20 seconds after a remote speaker calls the `muteLocalAudioStream` method, the remote speakers' callback excludes information of this user; 20 seconds after all remote users call the `muteLocalAudioStream` method, the SDK stops triggering the remote speakers' callback.
+     
+     This callback reports the IDs and volumes of the loudest speakers at the moment in the channel, and whether the local user is speaking.  By default, this callback is disabled. You can enable it by calling the enableAudioVolumeIndication method. Once enabled, this callback is triggered at the set interval, regardless of whether a user speaks or not. The SDK triggers two independent [reportAudioVolumeIndicationOfSpeakers](https://docs.agora.io/en/Video/API%20Reference/oc/Protocols/AgoraRtcEngineDelegate.html#//api/name/rtcEngine:reportAudioVolumeIndicationOfSpeakers:totalVolume:) callbacks at one time, which separately report the volume information of the local user and all the remote speakers. For more information, see the detailed parameter descriptions.
+    */
+    open func rtcEngine(_ engine: AgoraRtcEngineKit, reportAudioVolumeIndicationOfSpeakers speakers: [AgoraRtcAudioVolumeInfo], totalVolume: Int) {
+        lprint("reportAudioVolumeIndicationOfSpeakers, totalVolume: \(totalVolume)", .Verbose)
+        lprint(String(describing: speakers), .Verbose)
+    }
    /**
     Occurs when a remote user’s audio stream is muted/unmuted.
     - Parameters:
@@ -254,13 +275,37 @@ extension ARAudience: AgoraRtcEngineDelegate {
      - Note: This callback is invalid when the number of the users or broadcasters in a channel exceeds 20.
     */
     open func rtcEngine(_ engine: AgoraRtcEngineKit, didAudioMuted muted: Bool, byUid uid: UInt) {
-           // add logic to show icon that remote stream is muted
-        if self.showLogs {
-            let state: String = muted ? "muted" : "enabled"
-            print("remote user with uid: \(uid) \(state) their mic")
-        }
+        lprint("remote user with uid: \(uid), set Audio Muted: \(muted)", .Verbose)
+    }
+    /**
+    Reports which user is the loudest speaker over a period of time.
+    - Parameters:
+        - engine: [AgoraRtcEngineKit](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html) object
+        - speakerUid: The user ID of the active speaker. A speakerUid of 0 represents the local user.
+     
+     This callback reports the speaker with the highest accumulative volume during a certain period. If the user enables the audio volume indication by calling the enableAudioVolumeIndication method, this callback returns the user ID of the active speaker whose voice is detected by the audio volume detection module of the SDK.
+     
+     - Note:
+         - To receive this callback, you need to call the enableAudioVolumeIndication method.
+         - This callback returns the user ID of the user with the highest voice volume during a period of time, instead of at the moment.
+     */
+    open func rtcEngine(_ engine: AgoraRtcEngineKit, activeSpeaker speakerUid: UInt) {
+        lprint("activeSpeaker has uid: \(speakerUid)")
+    }
+    /**
+    Occurs when the engine sends the first local audio frame.
+    - Parameters:
+        - engine: [AgoraRtcEngineKit](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html) object
+        - elapsed: Time elapsed (ms) from the local user calling the [joinChannelByToken](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html#//api/name/joinChannelByToken:channelId:info:uid:joinSuccess:) method until the SDK triggers this callback.
+     
+     */
+    open func rtcEngine(_ engine: AgoraRtcEngineKit, firstLocalAudioFrame elapsed: Int) {
+        lprint("firstLocalAudioFrame with elapsed time: \(elapsed)")
     }
     
+    open func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteAudioFrameOfUid uid: UInt, elapsed: Int) {
+        lprint("firstRemoteAudioFrameOfUid: \(uid) with elapsed time: \(elapsed)")
+    }
     /**
     Occurs when the remote video state changes.
     - Parameters:
