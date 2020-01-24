@@ -9,26 +9,66 @@
 import UIKit
 import AgoraRtcEngineKit
 
+/**
+The `ARAudience` is a `UIViewController` that implements all the needed methods for the viewer (aundience member)  of the AR Live Stream. The class provides a manged UI for the audience user.
+ - Note: All class methods can be extended or overwritten.
+*/
 open class ARAudience: UIViewController {
     
-    // Agora
+    // MARK: Agora properties
+    /**
+    A reference to the `AgoraRtcEngineKit`
+     */
     var agoraKit: AgoraRtcEngineKit!                    // Agora.io Video Engine reference
+    /**
+    The `ARVideoSource` object used to pass the AR content to the video stream
+     */
     var arVideoSource: ARVideoSource = ARVideoSource()  // for passing the AR camera as the stream
-    var channelProfile: AgoraChannelProfile = .liveBroadcasting
-    var defaultToSpeakerPhone: Bool = true
-    var channelName: String!
+    /**
+    Sets the [AgoraChannelProfile](https://docs.agora.io/en/Video/API%20Reference/oc/Constants/AgoraChannelProfile.html).
     
+     Defaults to `.liveBroadcasting`
+     */
+    var channelProfile: AgoraChannelProfile = .liveBroadcasting
+    /**
+    Flag to determine whether the device enable to speaker mode when entering the channel
+     
+     Defaults to `true`
+     */
+    var defaultToSpeakerPhone: Bool = true
+    /**
+    Name of the channel to use when connecting to an Agora channel.
+     
+     - Note: Defaults to `nil`
+     - Warning: This value must be set before the ViewController is presented.
+    */
+    var channelName: String!
+    /**
+    A reference to the host user.
+     */
     var remoteUser: UInt?                   // remote user id
     
-    // UI
+    // MARK: UI properties
+    /**
+    A `UIView` representing the video stream of the host user
+     */
     var remoteVideoView: UIView!            // video stream from remote user
+    /**
+    The `remoteViewBackgroundColor` is the background color for the UIView until the remote video stream is received.
+     
+     Defaults to `.lightGray`
+     */
     var remoteViewBackgroundColor: UIColor = .lightGray
-    
+    /**
+    A `UIButton` that dismisses the view controller when tapped
+     */
     var backBtn: UIButton!
     var backBtnFrame: CGRect?
     var backBtnImage: UIImage?
     var backBtnTextLabel: String = "x"
-    
+    /**
+    An optional `UIImageView` that displays a watermark over part of the video.
+     */
     var watermark: UIImageView?
     var watermarkImage: UIImage?
     var watermarkFrame: CGRect?

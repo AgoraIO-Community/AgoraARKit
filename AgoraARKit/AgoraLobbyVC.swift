@@ -18,39 +18,39 @@ open class AgoraLobbyVC: UIViewController  {
     
     // UI properties
     /**
-    The `banner` is a `UIImageView` containing the banner image vsible within the Lobby view
+    The `UIImageView` containing the banner image vsible within the Lobby view
      */
     var banner: UIImageView?
     /**
-    The `bannerImage` is a `UIImage` representing the banner image vsible within the Lobby view.
+    The `UIImage` representing the banner image vsible within the Lobby view.
      */
     var bannerImage: UIImage?
     /**
-    The `bannerFrame` is a `CGRect` that is used as the `.frame` for the `banner`
+    The `CGRect` that is used as the `.frame` for the `banner`
      */
     var bannerFrame: CGRect?
     /**
-    The `broadcastBtnText` is a `String` used to set the text value for the button that launches the ARBroadcaster
+    The `String` used to set the text value for the button that launches the ARBroadcaster
      */
     var broadcastBtnText: String = "Broadcast"
     /**
-    The `broadcastBtnColor` is a `UIColor` used to set the text color for the button that launches the ARBroadcaster
+    The `UIColor` used to set the text color for the button that launches the ARBroadcaster
      */
     var broadcastBtnColor: UIColor = .systemBlue
     /**
-    The `audienceBtnText` is a `String` used to set the text value for the button that launches the ARAudience
+    The `String` used to set the text value for the button that launches the ARAudience
      */
     var audienceBtnText: String = "Audience"
     /**
-    The `audienceBtnColor` is a `UIColor` used to set the text color for the button that launches the ARAudience
+    The `UIColor` used to set the text color for the button that launches the ARAudience
      */
     var audienceBtnColor: UIColor = .systemGray
     /**
-    The `userInput` is a `UITextField` used to set the set the Agora channel name 
+    The  `UITextField` used to set the set the Agora channel name
      */
     var userInput: UITextField!
     /**
-    The `textFieldPlaceholder` is a `String` used to set the set the placeholder text value for the `userInput` text field
+    The `String` used to set the set the placeholder text value for the `userInput` text field
      */
     var textFieldPlaceholder: String = "Channel Name"
     

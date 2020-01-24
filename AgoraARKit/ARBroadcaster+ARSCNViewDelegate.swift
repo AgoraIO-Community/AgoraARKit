@@ -11,23 +11,21 @@ import ARKit
 extension ARBroadcaster: ARSCNViewDelegate {
     // MARK: Render delegate
     open func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
-        // do something when scene will render
+        // scene will render
     }
     
     open func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        // do something on render update
+        // renderer updated
     }
     
     open func renderer(_ renderer: SCNSceneRenderer, didRenderScene scene: SCNScene, atTime time: TimeInterval) {
-        
+        // scene did render
     }
     
-    // plane detection
     open func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         // anchor plane detection
     }
     
-    // plane updating
     open func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
         // anchor plane is updated
     }

@@ -8,7 +8,9 @@
 
 import ARVideoKit
 import CoreMedia
-
+/**
+ `ARBroadcaster` implements the `RenderARDelegate` from ARVideoKit to pass the composited rendered frame to the active Agora stream as the custom video source.
+ */
 extension ARBroadcaster: RenderARDelegate {
     // MARK: ARVidoeKit Renderer
     open func frame(didRender buffer: CVPixelBuffer, with time: CMTime, using rawBuffer: CVPixelBuffer) {

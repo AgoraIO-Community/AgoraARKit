@@ -8,6 +8,9 @@
 
 import SceneKit
 
+/**
+ A set of extensions and functions that make `SCNVector3` operations simpler
+ */
 internal extension SCNVector3 {
     func distance(to destination: SCNVector3) -> CGFloat {
         let dx = destination.x - x

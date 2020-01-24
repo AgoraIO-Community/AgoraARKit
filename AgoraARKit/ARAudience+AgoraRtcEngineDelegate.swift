@@ -10,7 +10,10 @@ import AgoraRtcEngineKit
 
 /**
 The `ARAudience`implements the `AgoraRtcEngineDelegate` to handle the Agora RTC Engine events. Within these delegate functions the managed ui handles the UI  updates when a ARBroadcaster joins or leaves the channel.
- - Note: All delegate methods can be extended or overwritten.
+ - Note: This class extension implements all delegate methods for Agora's Core Delegate, Stream Deleagate, and select Media Delegate methods, can be extended or overwritten.
+ - Warning: if you ovveride `didJoinedOfUid`, `remoteVideoStateChangedOfUid`, you must call the method's `super` otherwise video functionality will be affected.
+ 
+ For full list of available delegate methods see [AgoraRtcEngineDelegate](https://docs.agora.io/en/Video/API%20Reference/oc/Protocols/AgoraRtcEngineDelegate.html) API.
 */
 extension ARAudience: AgoraRtcEngineDelegate {
     // MARK: Core Delegate Methods
@@ -302,9 +305,42 @@ extension ARAudience: AgoraRtcEngineDelegate {
     open func rtcEngine(_ engine: AgoraRtcEngineKit, firstLocalAudioFrame elapsed: Int) {
         lprint("firstLocalAudioFrame with elapsed time: \(elapsed)")
     }
-    
+    /**
+    Occurs when the engine receives the first audio frame from a specified remote user.
+    - Parameters:
+        - engine: [AgoraRtcEngineKit](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html) object
+        - uid:User ID of the remote user.
+        - elapsed:Time elapsed (ms) from the local user calling the [joinChannelByToken](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html#//api/name/joinChannelByToken:channelId:info:uid:joinSuccess:) method until the SDK triggers this callback.
+     
+     This callback is triggered in either of the following scenarios:
+    - The remote user joins the channel and sends the audio stream.
+    - The remote user stops sending the audio stream and re-sends it after 15 seconds. Possible reasons include:
+    - The remote user leaves channel.
+    - The remote user drops offline.
+    - The remote user calls [muteLocalAudioStream](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html#//api/name/muteLocalAudioStream:).
+    - The remote user calls [disableAudio](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html#//api/name/disableAudio).
+    */
     open func rtcEngine(_ engine: AgoraRtcEngineKit, firstRemoteAudioFrameOfUid uid: UInt, elapsed: Int) {
         lprint("firstRemoteAudioFrameOfUid: \(uid) with elapsed time: \(elapsed)")
+    }
+    /**
+    Occurs when a remote user’s video stream playback pauses/resumes.
+    - Parameters:
+        - engine: [AgoraRtcEngineKit](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html) object
+        - muted: A remote user’s video stream playback pauses/resumes. Where `true` represets PAUSE, and `false` is RESUME
+        - uid: ID of the remote user or host who's video was paused/resumed
+     
+     You can also use the remoteVideoStateChangedOfUid callback with the following parameters:
+
+     - `AgoraVideoRemoteStateStopped(0)` and `AgoraVideoRemoteStateReasonRemoteMuted(5)`.
+     - `AgoraVideoRemoteStateDecoding(2)` and `AgoraVideoRemoteStateReasonRemoteUnmuted(6)`.
+
+     The SDK triggers this callback when the remote user stops or resumes sending the video stream by calling the [muteLocalVideoStream](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html#//api/name/userMuteVideoBlock:) method.
+     - Note:
+     This callback is invalid when the number of users or broadcasters in a channel exceeds 20.
+     */
+    open func rtcEngine(_ engine: AgoraRtcEngineKit, didVideoMuted muted: Bool, byUid uid: UInt) {
+        lprint("remote user with uid: \(uid), set Video Muted: \(muted)", .Verbose)
     }
     /**
     Occurs when the remote video state changes.
@@ -333,12 +369,33 @@ extension ARAudience: AgoraRtcEngineDelegate {
     }
     
     // MARK: Stream Message Delegate Methods
+    /**
+    Occurs when the local user receives the data stream from a remote user within five seconds.
+    - Parameters:
+        - engine: [AgoraRtcEngineKit](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html) object
+        - uid: User ID of the remote user sending the message.
+        - streamId: Stream ID
+        - data: Data received by the local user
+     
+     The SDK triggers this callback when the local user receives the stream message that the remote user sends by calling the [sendStreamMessage](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html#//api/name/sendStreamMessage:data:) method.
+     */
     open func rtcEngine(_ engine: AgoraRtcEngineKit, receiveStreamMessageFromUid uid: UInt, streamId: Int, data: Data) {
            // successfully received message from user
            lprint("STREAMID: \(streamId)\n - DATA: \(data)", .Verbose)
    }
        
-           
+    /**
+    Occurs when the local user does not receive the data stream from the remote user within five seconds.
+    - Parameters:
+        - engine: [AgoraRtcEngineKit](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html) object
+        - uid: User ID of the remote user sending the message.
+        - streamId: Stream ID
+        - error:Error code. See [AgoraErrorCode](https://docs.agora.io/en/Video/API%20Reference/oc/Constants/AgoraErrorCode.html).
+        - missed: Number of lost messages.
+        - cached: Number of incoming cached messages when the data stream is interrupted.
+
+     The SDK triggers this callback when the local user fails to receive the stream message that the remote user sends by calling the [sendStreamMessage](https://docs.agora.io/en/Video/API%20Reference/oc/Classes/AgoraRtcEngineKit.html#//api/name/sendStreamMessage:data:) method.
+     */
     open func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurStreamMessageErrorFromUid uid: UInt, streamId: Int, error: Int, missed: Int, cached: Int) {
            // message failed to send(
            lprint("STREAMID: \(streamId)\n - ERROR: \(error)", .Verbose)

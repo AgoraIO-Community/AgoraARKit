@@ -14,16 +14,42 @@ import Foundation
 
 open class ARBroadcaster: UIViewController {
     
-    // ARKit
+    // MARK: ARKit properties
+    /**
+    A reference to the `ARSCNView`
+     */
     var sceneView: ARSCNView!
+    /**
+    The `ARWorldTrackingConfiguration`'s setting for plane detection
+     
+     Defaults to `nil`
+     */
     var planeDetection: ARWorldTrackingConfiguration.PlaneDetection?
+    /**
+        Setting to enable default lighting within the ARSCNView
+     */
     var enableDefaultLighting: Bool = false
+    /**
+       Setting to update lighting information within the ARSCNView
+    */
     var autoUpdateLights: Bool = false
+    /**
+       Setting to enable light estimation within the `ARTrackingConfiguration`
+    */
     var lightEstimation: Bool = false
+    /**
+       Debug option for the `ARTrackingConfiguration` to display render stats
+    */
     var showStatistics: Bool = true
+    /**
+       Debug option  for the `ARTrackingConfiguration` to display debug data
+    */
     var arSceneDebugOptions: SCNDebugOptions = [.showWorldOrigin, .showFeaturePoints]
     
-    // Agora
+    // MARK: Agora Properties
+    /**
+    A reference to the `AgoraRtcEngineKit`
+     */
     var agoraKit: AgoraRtcEngineKit!                    // Agora.io Video Engine reference
     var arVideoSource: ARVideoSource = ARVideoSource()  // for passing the AR camera as the stream
     var channelProfile: AgoraChannelProfile = .liveBroadcasting
@@ -36,26 +62,34 @@ open class ARBroadcaster: UIViewController {
     var defaultToSpeakerPhone: Bool = true
     var channelName: String!                            // name of the channel to join
     
-    // ARVideoKit
+    // MARK: ARVideoKit properties
     var arvkRenderer: RecordAR!                         // ARVideoKit Renderer - used as an off-screen renderer
     
-    // UI
-    var watermark: UIImageView?
-    var watermarkImage: UIImage?
-    var watermarkFrame: CGRect?
-    var watermarkAlpha: CGFloat = 0.25
-    
+    // MARK: UI properties
+    /**
+    A `UIButton` that toggles the microphone
+     */
     var micBtn: UIButton!
     var micBtnFrame: CGRect?
     var micBtnImage: UIImage?
     var micBtnTextLabel: String = "un-mute"
     var muteBtnImage: UIImage?
     var muteBtnTextLabel: String = "mute"
-    
+    /**
+    A `UIButton` that dismisses the view controller when tapped
+     */
     var backBtn: UIButton!
     var backBtnFrame: CGRect?
     var backBtnImage: UIImage?
     var backBtnTextLabel: String = "x"
+    
+    /**
+    An optional `UIImageView` that displays a watermark over part of the video.
+     */
+    var watermark: UIImageView?
+    var watermarkImage: UIImage?
+    var watermarkFrame: CGRect?
+    var watermarkAlpha: CGFloat = 0.25
     
     var viewBackgroundColor: UIColor = .black
     
@@ -169,7 +203,11 @@ open class ARBroadcaster: UIViewController {
     // MARK: Agora Interface
     open func joinChannel() {
         // Set audio route to speaker
-//        self.agoraKit.setDefaultAudioRouteToSpeakerphone(defaultToSpeakerPhone)
+        let screenMaxLength = max(UIScreen.main.bounds.size.width, UIScreen.main.bounds.size.height)
+        // TODO: remove if statement once Agora iPhone X audio bug is resolved
+        if UIDevice.current.userInterfaceIdiom == .phone && (screenMaxLength >= 896.0 && screenMaxLength <= 1024) {
+            self.agoraKit.setDefaultAudioRouteToSpeakerphone(defaultToSpeakerPhone)
+        }
         // Join the channel
         self.agoraKit.joinChannel(byToken: AgoraARKit.agoraToken, channelId: self.channelName, info: nil, uid: 0) { [weak self] (channel, uid, elapsed) in
             if self!.showLogs {
