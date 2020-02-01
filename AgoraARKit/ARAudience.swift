@@ -19,7 +19,7 @@ open class ARAudience: UIViewController {
     /**
     A reference to the `AgoraRtcEngineKit`
      */
-    var agoraKit: AgoraRtcEngineKit!                    // Agora.io Video Engine reference
+    var agoraKit: AgoraRtcEngineKit!
     /**
     The `ARVideoSource` object used to pass the AR content to the video stream
      */
@@ -63,26 +63,50 @@ open class ARAudience: UIViewController {
     A `UIButton` that dismisses the view controller when tapped
      */
     var backBtn: UIButton!
+    /**
+    A `CGRect` that represents the frame for the `backBtn`.
+    - Note: If a value is not explicitly set, the managed UI will uses default settings
+     */
     var backBtnFrame: CGRect?
+    /**
+    An optional `UIImage` that is used as the image for the `backBtn`
+     */
     var backBtnImage: UIImage?
+    /**
+    The default value to display if an image is not set for the `backBtn`
+     */
     var backBtnTextLabel: String = "x"
     /**
     An optional `UIImageView` that displays a watermark over part of the video.
      */
     var watermark: UIImageView?
+    /**
+    An optional `UIImage` that is used as the image for the `watermark`
+     - Warning: If this value is not set, then a watermark will not be displayed.
+     */
     var watermarkImage: UIImage?
+    /**
+    A `CGRect` that represents the frame for the `watermark`,
+     - Note: If a `watermarkImage` is set but `watermarkFrame` is not explicitly set, the managed UI will uses default settings
+     */
     var watermarkFrame: CGRect?
+    /**
+    A `CGFloat` that represents the transparency of the `watermark`
+     */
     var watermarkAlpha: CGFloat = 0.25
-    
     
     // Debugging
     var showLogs: Bool = true
     internal let debug: Bool = true
     
     // MARK: VC Events
-    override open func loadView() {
-        super.loadView()
-        print("AudienceVC - loadView")
+
+    /**
+    AgoraARKit uses the `viewDidLoad` method to create the UI and set up the Agora engine configuration
+     */
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        lprint("AudienceVC - viewDidLoad", .Verbose)
         createUI()
         guard let agoraAppID = AgoraARKit.agoraAppId else { return }
         // Add Agora setup
@@ -93,33 +117,19 @@ open class ARAudience: UIViewController {
         }
         self.agoraKit = agoraKit
     }
-
-    override open func viewDidLoad() {
-        super.viewDidLoad()
-        lprint("AudienceVC - viewDidLoad", .Verbose)
-        guard self.agoraKit != nil else { return }
-        joinChannel() // Agora - join the channel
-        
-    }
-
-    override open func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        lprint("AudienceVC - viewWillAppear", .Verbose)
-    }
-
+    
+    /**
+    AgoraARKit joins the Agora channel within the `viewDidAppear`
+    */
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         lprint("AudienceVC - viewDidAppear", .Verbose)
         // do something when the view has appeared
         if AgoraARKit.agoraAppId == nil {
             popView()
+        } else {
+            joinChannel() // Agora - join the channel
         }
-    }
-
-    override open func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        lprint("AudienceVC - viewWillDisappear", .Verbose)
-        leaveChannel();
     }
 
     // MARK: Hide status bar
@@ -128,6 +138,9 @@ open class ARAudience: UIViewController {
     }
     
     // MARK: Agora Interface
+    /**
+    Conencts to the Agora channel, and sets the default audio route to speakerphone
+    */
     open func joinChannel() {
         // Set audio route to speaker
         self.agoraKit.setDefaultAudioRouteToSpeakerphone(defaultToSpeakerPhone)
@@ -147,6 +160,9 @@ open class ARAudience: UIViewController {
     }
     
     // MARK: UI
+    /**
+     Programmatically generated UI, creates the SceneView, and buttons.
+     */
     open func createUI() {
         lprint("createUI", .Verbose)
         // add remote video view
@@ -185,6 +201,9 @@ open class ARAudience: UIViewController {
     }
     
     // MARK: Button Events
+    /**
+     Dismiss the current view
+     */
     @IBAction func popView() {
         leaveChannel()
         self.dismiss(animated: true, completion: nil)

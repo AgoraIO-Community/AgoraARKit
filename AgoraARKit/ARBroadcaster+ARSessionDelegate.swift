@@ -8,7 +8,7 @@
 
 import ARKit
 /**
- `ARBroadcaster` implements the `ARSessionDelegate` and uses the `didOutputAudioSampleBuffer` callback to pass the audio data provided by the ARKit session to the active Agora stream as part of the custom audio source
+ `ARBroadcaster` implements the `ARSessionDelegate` and uses the `didOutputAudioSampleBuffer` callback to pass the audio data provided by the ARKit session to the active Agora stream as part of the custom audio source*
  */
 extension ARBroadcaster: ARSessionDelegate {
     

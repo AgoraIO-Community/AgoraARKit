@@ -7,7 +7,7 @@
 //
 
 /**
-An enum to represent the avialable "levels" of logging available.
+An enum to represent the avialable levels of verbosity for logging.
  */
 public enum LogLevel: Int {
     case None = 0
@@ -15,15 +15,15 @@ public enum LogLevel: Int {
     case Verbose = 2
 }
 /**
- The amout of logs to display
+ The verbosity setting for the amount of logs to display.
  */
 public var logLevel: LogLevel = .Normal
 
 /**
- A simple method to accepts a log message and the `LogLevel` at which to print it.
+ A simple method to accepts a log message and the verbosity level at which to print it.
  - Parameters:
      - log: A message to output in the Xcode logs
-     - level: The `LogLevel` for which to show the given log. 
+     - level: The verbosity level used to determine whether or not to show the given log based on the active _"logLevel"_
  */
 public func lprint(_ log: String, _ level: LogLevel = .Normal) {
     #if DEBUG
