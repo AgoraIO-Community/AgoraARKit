@@ -67,6 +67,10 @@ open class ARBroadcaster: UIViewController {
     
     // MARK: UI properties
     /**
+    A Dictionary of `UIView`s representing the video streams of the host users
+     */
+    var remoteVideoViews: [UInt:UIView] = [:]    // Dictionary of remote views
+    /**
     A `UIButton` that toggles the microphone
      */
     var micBtn: UIButton!

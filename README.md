@@ -131,12 +131,8 @@ import ARKit
 
 class FaceBroadcaster : ARBroadcaster {
     
-    // Agora
-    var remoteVideoView: UIView!                  // video stream from remote user
-    var remoteVideoViews: [UInt:UIView] = [:]     // Dictionary of faces
-    
     // placements dictionary
-    var faceNodes: [UUID:SCNNode] = [:]
+    var faceNodes: [UUID:SCNNode] = [:]           // Dictionary of faces
     
     override func viewDidLoad() {
         super.viewDidLoad() 
@@ -151,7 +147,7 @@ class FaceBroadcaster : ARBroadcaster {
         self.arvkRenderer?.prepare(configuration)
     }
     
-    // anchore detection
+    // anchor detection
     override func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         super.renderer(renderer, didAdd: node, for: anchor)
         guard let sceneView = renderer as? ARSCNView, anchor is ARFaceAnchor else { return }
