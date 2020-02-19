@@ -131,12 +131,8 @@ import ARKit
 
 class FaceBroadcaster : ARBroadcaster {
     
-    // Agora
-    var remoteVideoView: UIView!                  // video stream from remote user
-    var remoteVideoViews: [UInt:UIView] = [:]     // Dictionary of faces
-    
     // placements dictionary
-    var faceNodes: [UUID:SCNNode] = [:]
+    var faceNodes: [UUID:SCNNode] = [:]           // Dictionary of faces
     
     override func viewDidLoad() {
         super.viewDidLoad() 
