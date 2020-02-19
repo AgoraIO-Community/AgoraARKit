@@ -180,6 +180,14 @@ extension ARAudience: AgoraRtcEngineDelegate {
     */
     open func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
         lprint("didOfflineOfUid: \(uid) with code: \(reason)", .Verbose)
+        if remoteVideoView.subviews.count > 0 {
+            for subview in remoteVideoView.subviews {
+                subview.removeFromSuperview()
+            }
+        }
+        if uid == self.remoteUser {
+            self.remoteUser = nil
+        }
     }
     /**
     Occurs when the network connection state changes.

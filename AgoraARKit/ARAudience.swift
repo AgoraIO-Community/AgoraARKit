@@ -145,9 +145,7 @@ open class ARAudience: UIViewController {
         // Set audio route to speaker
         self.agoraKit.setDefaultAudioRouteToSpeakerphone(defaultToSpeakerPhone)
         // Join the channel
-        self.agoraKit.joinChannel(byToken: AgoraARKit.agoraToken, channelId: self.channelName, info: nil, uid: 0) { (channel, uid, elapsed) in
-          lprint("Successfully joined: \(channel), with \(uid): \(elapsed) secongs ago")
-        }
+        self.agoraKit.joinChannel(byToken: AgoraARKit.agoraToken, channelId: self.channelName, info: nil, uid: 0) 
         UIApplication.shared.isIdleTimerDisabled = true     // Disable idle timmer
     }
     
@@ -161,7 +159,7 @@ open class ARAudience: UIViewController {
     
     // MARK: UI
     /**
-     Programmatically generated UI, creates the SceneView, and buttons.
+     Programmatically generated UI, creates the view, and buttons.
      */
     open func createUI() {
         lprint("createUI", .Verbose)
@@ -169,18 +167,21 @@ open class ARAudience: UIViewController {
         let remoteView = UIView()
         remoteView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
         remoteView.backgroundColor = remoteViewBackgroundColor
+        remoteView.contentMode = .scaleAspectFit
         self.view.insertSubview(remoteView, at: 1)
         self.remoteVideoView = remoteView
         
         // add branded logo to view
         if let watermarkImage = self.watermarkImage {
             let watermark = UIImageView(image: watermarkImage)
+            watermark.contentMode = .scaleAspectFit
             if let watermarkFrame = self.watermarkFrame {
                 watermark.frame = watermarkFrame
             } else {
-                watermark.frame = CGRect(x: self.view.bounds.maxX-100, y: self.view.bounds.maxY-100, width: 75, height: 75)
+                watermark.frame = CGRect(x: self.view.frame.maxX-100, y: self.view.frame.maxY-100, width: 75, height: 75)
             }
             watermark.alpha = watermarkAlpha
+            self.view.insertSubview(watermark, at: 2)
             self.watermark = watermark
         }
         
