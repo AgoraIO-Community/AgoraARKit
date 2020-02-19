@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03450D1A23FCFC7F008DE654 /* UIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03450D1923FCFC7F008DE654 /* UIManager.swift */; };
 		0359F22423DA557E00647056 /* AgoraARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0359F21A23DA557E00647056 /* AgoraARKit.framework */; };
 		0359F22923DA557E00647056 /* AgoraARKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0359F22823DA557E00647056 /* AgoraARKitTests.swift */; };
 		0359F22B23DA557E00647056 /* AgoraARKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0359F21D23DA557E00647056 /* AgoraARKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		03450D1923FCFC7F008DE654 /* UIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIManager.swift; sourceTree = "<group>"; };
 		0359F21A23DA557E00647056 /* AgoraARKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AgoraARKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0359F21D23DA557E00647056 /* AgoraARKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AgoraARKit.h; sourceTree = "<group>"; };
 		0359F21E23DA557E00647056 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				0359F23F23DA559A00647056 /* ARVideoSource.swift */,
 				0359F23423DA559900647056 /* SCNVector3+Extensions.swift */,
 				0359F21E23DA557E00647056 /* Info.plist */,
+				03450D1923FCFC7F008DE654 /* UIManager.swift */,
 			);
 			path = AgoraARKit;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 				0359F24023DA559A00647056 /* SCNVector3+Extensions.swift in Sources */,
 				0359F24223DA559A00647056 /* ARBroadcaster+ARSessionDelegate.swift in Sources */,
 				0359F24823DA559A00647056 /* ARAudience+AgoraRtcEngineDelegate.swift in Sources */,
+				03450D1A23FCFC7F008DE654 /* UIManager.swift in Sources */,
 				0359F24723DA559A00647056 /* ARBroadcaster+ARSCNViewDelegate.swift in Sources */,
 				0359F24123DA559A00647056 /* ARBroadcaster.swift in Sources */,
 				0359F24F23DA91A200647056 /* Logger.swift in Sources */,
