@@ -151,7 +151,7 @@ class FaceBroadcaster : ARBroadcaster {
         self.arvkRenderer?.prepare(configuration)
     }
     
-    // plane detection
+    // anchore detection
     override func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         super.renderer(renderer, didAdd: node, for: anchor)
         guard let sceneView = renderer as? ARSCNView, anchor is ARFaceAnchor else { return }
