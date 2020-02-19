@@ -59,9 +59,6 @@ open class AgoraLobbyVC: UIViewController  {
     override open func loadView() {
         super.loadView()
         lprint("LobbyVC - loadView", .Verbose)
-        guard (AgoraARKit.agoraAppId != nil) else {
-            fatalError("You msst include an Agora APP ID to use ARKitLive. Get your Agora App ID from: https://console.agora.io")
-        }
     }
 
     override open func viewDidLoad() {
@@ -73,6 +70,9 @@ open class AgoraLobbyVC: UIViewController  {
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         lprint("LobbyVC - viewWillAppear", .Verbose)
+        guard (AgoraARKit.agoraAppId != nil) else {
+            fatalError("You msst include an Agora APP ID to use ARKitLive. Get your Agora App ID from: https://console.agora.io")
+        }
     }
     
     override open func viewDidAppear(_ animated: Bool) {
