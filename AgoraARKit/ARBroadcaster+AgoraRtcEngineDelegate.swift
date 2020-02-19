@@ -171,9 +171,13 @@ extension ARBroadcaster: AgoraRtcEngineDelegate {
         - **Leave a channel:** When the user/host leaves a channel, the user/host sends a goodbye message. When the message is received, the SDK assumes that the user/host leaves a channel.
         - **Drop offline:** When no data packet of the user or host is received for a certain period of time (20 seconds for the Communication profile, and more for the Live-broadcast profile), the SDK assumes that the user/host drops offline. Unreliable network connections may lead to false detections, so Agora recommends using a signaling system for more reliable offline detection.
        */
-       open func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
-           lprint("didOfflineOfUid: \(uid) with code: \(reason)", .Verbose)
-       }
+        open func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
+            lprint("didOfflineOfUid: \(uid) with code: \(reason)", .Verbose)
+            guard let remoteVideoView = self.remoteVideoViews[uid] else { return }
+            remoteVideoView.removeFromSuperview() // remove the remote view from the super view
+            self.remoteVideoViews.removeValue(forKey: uid) // remove the remote view from the dictionary
+            adjustRemoteViews(remoteViews: self.remoteVideoViews, view: self.view)
+        }
        /**
        Occurs when the network connection state changes.
        - Parameters:
@@ -348,6 +352,19 @@ extension ARBroadcaster: AgoraRtcEngineDelegate {
                lprint("firstRemoteVideoStarting for Uid: \(uid)", .Verbose)
            } else if state == .decoding {
                lprint("firstRemoteVideoDecoded for Uid: \(uid)", .Verbose)
+               var remoteView: UIView
+               if let existingRemoteView = self.remoteVideoViews[uid] {
+                   remoteView = existingRemoteView
+               } else {
+                   remoteView = createRemoteView(remoteViews: self.remoteVideoViews, view: self.view)
+               }
+               let videoCanvas = AgoraRtcVideoCanvas()
+               videoCanvas.uid = uid
+               videoCanvas.view = remoteView
+               videoCanvas.renderMode = .hidden
+               agoraKit.setupRemoteVideo(videoCanvas)
+               self.view.insertSubview(remoteView, at: 2)
+               self.remoteVideoViews[uid] = remoteView
            }
        }
        
