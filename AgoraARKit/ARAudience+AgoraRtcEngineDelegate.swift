@@ -187,7 +187,19 @@ extension ARAudience: AgoraRtcEngineDelegate {
         }
         if uid == self.remoteUser {
             self.remoteUser = nil
+            guard let newHostViewDictRow = self.remoteVideoViews.popFirst() else { return }
+            newHostViewDictRow.value.removeFromSuperview() // remove the remote view from the super view
+            guard let remoteView = self.remoteVideoView else { return }
+            let videoCanvas = AgoraRtcVideoCanvas()
+            videoCanvas.uid = newHostViewDictRow.key
+            videoCanvas.view = remoteView
+            videoCanvas.renderMode = .hidden
+            agoraKit.setupRemoteVideo(videoCanvas)
+        } else if let remoteVideoView = self.remoteVideoViews[uid] {
+            remoteVideoView.removeFromSuperview() // remove the remote view from the super view
+            self.remoteVideoViews.removeValue(forKey: uid) // remove the remote view from the dictionary
         }
+        adjustRemoteViews(remoteViews: self.remoteVideoViews, view: self.view)
     }
     /**
     Occurs when the network connection state changes.
@@ -373,6 +385,22 @@ extension ARAudience: AgoraRtcEngineDelegate {
             }
         } else if state == .decoding {
             lprint("firstRemoteVideoDecoded for Uid: \(uid)", .Verbose)
+            if uid != self.remoteUser {
+                lprint("firstRemoteVideoDecoded for Uid: \(uid)", .Verbose)
+                var remoteView: UIView
+                if let existingRemoteView = self.remoteVideoViews[uid] {
+                    remoteView = existingRemoteView
+                } else {
+                    remoteView = createRemoteView(remoteViews: self.remoteVideoViews, view: self.view)
+                }
+                let videoCanvas = AgoraRtcVideoCanvas()
+                videoCanvas.uid = uid
+                videoCanvas.view = remoteView
+                videoCanvas.renderMode = .hidden
+                agoraKit.setupRemoteVideo(videoCanvas)
+                self.view.insertSubview(remoteView, at: 2)
+                self.remoteVideoViews[uid] = remoteView
+            }
         }
     }
     

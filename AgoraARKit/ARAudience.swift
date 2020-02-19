@@ -46,13 +46,18 @@ open class ARAudience: UIViewController {
     /**
     A reference to the host user.
      */
-    var remoteUser: UInt?                   // remote user id
+    var remoteUser: UInt?                       // remote user id
     
     // MARK: UI properties
     /**
     A `UIView` representing the video stream of the host user
      */
-    var remoteVideoView: UIView!            // video stream from remote user
+    var remoteVideoView: UIView!                // video stream from remote user
+    
+    /**
+    A Dictionary of `UIView`s representing the video streams of the host users
+     */
+    var remoteVideoViews: [UInt:UIView] = [:]    // Dictionary of remote views
     /**
     The `remoteViewBackgroundColor` is the background color for the UIView until the remote video stream is received.
      
