@@ -16,13 +16,17 @@ AgoraARKit requires a minimum version of iOS 12.2, and supports the following de
 iOS 12.2 can be downloaded from Apple’s Developer website.
 
 ## Dependancies
-AgoraARKit relies on the Agora.io Video SDK and ARVideoKit.
+AgoraARKit relies on the [Agora.io Video SDK](https://docs.agora.io/en/Agora%20Platform/downloads) and [ARVideoKit](https://github.com/AFathi/ARVideoKit).
 
 ## Support
 - [Agora.io iOS API](https://docs.agora.io/en/Video/API%20Reference/oc/docs/headers/Agora-Objective-C-API-Overview.html)
 - [Join the Agoira.io Developer Slack community](https://join.slack.com/t/agoraiodev/shared_invite/enQtNjk0OTg4ODgyNTc5LTczOWQ0YjBkMTMwZDFmYzViYjIxNjg4YTM0OWEzZjdkODM1NDNmOTM1ZTE4Y2Q1ZWUwMjNjMzMxMmZiNGI3ODg)
 
-### Set up using CocoaPods
+
+## Quick start guide
+To get started with the AgoraARVideoKit, please follow the steps below to 
+
+### Set up using CocoaPods (coming soon)
 > NOTE: CocoaPods is not currently set up _(use Manual Setup below)_
 1. Add to your podfile:
 
@@ -42,6 +46,78 @@ AgoraARKit relies on the Agora.io Video SDK and ARVideoKit.
 2. Import [`ARVideoKit`](https://github.com/AFathi/ARVideoKit) and [`Agora.io Video SDK`](https://docs.agora.io/en/Agora%20Platform/downloads) SDKS
 3. Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` to plist with a brief explanation (see demo project for an example)
 
-### Quick start guide
+### Implementation
+1. once you have imported the AgoraARKit and its dependancies, open your `ViewController.swift` and add:
+```
+import AgoraARKit
+```
 
+2. Next set your `ViewController` class to inherit from `AgoraLobbyVC` and set your Agora App Id with the `loadView` method. If you want to set a custom image for the Lobby view, set it using the `bannerImage` property.
+```
+override func loadView() {
+    super.loadView()
+    
+    AgoraARKit.agoraAppId = ""
+
+    
+    // set the banner image within the initial view
+    if let agoraLogo = UIImage(named: "ar-support-icon") {
+        self.bannerImage = agoraLogo
+    }
+}
+```
+
+## Customization
+The AgoraARKit classes are extendtable so you can subclass them to customize them as needed. 
+
+### LobbyVC
+Since we are already inheriting from the `AgoraLobbyVC`, let's `override` the `joinSession` and `createSession` methods within our `ViewController` to set the images for the audience and broadcaster views.
+
+Custom images in Audience view
+```
+@IBAction override func joinSession() {
+    if let channelName = self.userInput.text {
+        if channelName != "" {
+            let arAudienceVC = ARAudience()
+            if let exitBtnImage = UIImage(named: "exit") {
+                arAudienceVC.backBtnImage = exitBtnImage
+            }
+            arAudienceVC.channelName = channelName
+            arAudienceVC.modalPresentationStyle = .fullScreen
+            self.present(arAudienceVC, animated: true, completion: nil)
+        } else {
+            // TODO: add visible msg to user
+            print("unable to join a broadcast without a channel name")
+        }
+    }
+}
+```
+
+Custom images in Broadcaster view
+```
+@IBAction override func createSession() {
+    if let channelName = self.userInput.text {
+        if channelName != "" {
+            let arBroadcastVC = ARBroadcaster()
+            if let exitBtnImage = UIImage(named: "exit") {
+                arBroadcastVC.backBtnImage = exitBtnImage
+            }
+            if let micBtnImage = UIImage(named: "mic"),
+                let muteBtnImage = UIImage(named: "mute"),
+                let watermakerImage = UIImage(named: "agora-logo") {
+                arBroadcastVC.micBtnImage = micBtnImage
+                arBroadcastVC.muteBtnImage = muteBtnImage
+                arBroadcastVC.watermarkImage = watermakerImage
+            }
+            
+            arBroadcastVC.channelName = channelName
+            arBroadcastVC.modalPresentationStyle = .fullScreen
+            self.present(arBroadcastVC, animated: true, completion: nil)
+        } else {
+            // TODO: add visible msg to user
+            print("unable to launch a broadcast without a channel name")
+        }
+    }
+}
+```
 ...
