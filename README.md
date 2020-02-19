@@ -120,4 +120,57 @@ Custom images in Broadcaster view
     }
 }
 ```
+
+### ARBroadcaster
+The ARBroadcaster is a UIViewController that implements the ARKit Session and Render Delegates along with the Agora RTC Engine Delegate methods. For a full list of each please see the documentation.
+
+The current `ARBroadcaster` class is setup for `WorldTracking`, but this can be easily updated to front facing. Below is an example of the `ARBroadcaster` extended for ARKit `FaceTracking` and also adds support for multiple broadcasters.
+
+```
+import ARKit
+
+class FaceBroadcaster : ARBroadcaster {
+    
+    // Agora
+    var remoteVideoView: UIView!                  // video stream from remote user
+    var remoteVideoViews: [UInt:UIView] = [:]     // Dictionary of faces
+    
+    // placements dictionary
+    var faceNodes: [UUID:SCNNode] = [:]
+    
+    override func viewDidLoad() {
+        super.viewDidLoad() 
+    }
+    
+    override func setARConfiguration() {
+        print("setARConfiguration")        // Configure ARKit Session
+        let configuration = ARFaceTrackingConfiguration()
+        configuration.isLightEstimationEnabled = true
+        // run the config to start the ARSession
+        self.sceneView.session.run(configuration)
+        self.arvkRenderer?.prepare(configuration)
+    }
+    
+    // plane detection
+    override func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        super.renderer(renderer, didAdd: node, for: anchor)
+        guard let sceneView = renderer as? ARSCNView, anchor is ARFaceAnchor else { return }
+        /*
+         Write depth but not color and render before other objects.
+         This causes the geometry to occlude other SceneKit content
+         while showing the camera view beneath, creating the illusion
+         that real-world faces are obscuring virtual 3D objects.
+         */
+        let faceGeometry = ARSCNFaceGeometry(device: sceneView.device!)!
+        faceGeometry.firstMaterial!.colorBufferWriteMask = []
+        let occlusionNode = SCNNode(geometry: faceGeometry)
+        occlusionNode.renderingOrder = -1
+        
+        let contentNode = SCNNode()
+        contentNode.addChildNode(occlusionNode)
+        node.addChildNode(contentNode)
+        faceNodes[anchor.identifier] = node
+    }
+}
+```
 ...
