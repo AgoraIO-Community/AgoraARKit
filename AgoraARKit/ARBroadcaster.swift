@@ -28,23 +28,23 @@ open class ARBroadcaster: UIViewController {
     /**
         Setting to enable default lighting within the ARSCNView
      */
-    var enableDefaultLighting: Bool = false
+    open var enableDefaultLighting: Bool = true
     /**
        Setting to update lighting information within the ARSCNView
     */
-    var autoUpdateLights: Bool = false
+    open var autoUpdateLights: Bool = true
     /**
        Setting to enable light estimation within the `ARTrackingConfiguration`
     */
-    var lightEstimation: Bool = false
+    open var lightEstimation: Bool = true
     /**
        Debug option for the `ARTrackingConfiguration` to display render stats
     */
-    var showStatistics: Bool = true
+    open var showStatistics: Bool = true
     /**
        Debug option  for the `ARTrackingConfiguration` to display debug data
     */
-    var arSceneDebugOptions: SCNDebugOptions = [.showWorldOrigin, .showFeaturePoints]
+    open var arSceneDebugOptions: SCNDebugOptions = [.showWorldOrigin, .showFeaturePoints]
     
     // MARK: Agora Properties
     /**
@@ -54,7 +54,7 @@ open class ARBroadcaster: UIViewController {
     var arVideoSource: ARVideoSource = ARVideoSource()  // for passing the AR camera as the stream
     var channelProfile: AgoraChannelProfile = .liveBroadcasting
     var frameRate: AgoraVideoFrameRate = .fps30
-    var videoDimension: CGSize = AgoraVideoDimension640x360
+    var videoDimension: CGSize = AgoraVideoDimension1280x720
     var videoBitRate: Int = AgoraVideoBitrateStandard
     var videoOutputOrientationMode: AgoraVideoOutputOrientationMode = .fixedPortrait
     var audioSampleRate: UInt = 44100
@@ -120,7 +120,7 @@ open class ARBroadcaster: UIViewController {
         agoraKit.setVideoEncoderConfiguration(videoConfig) // - set video encoding configuration (dimensions, frame-rate, bitrate, orientation
         agoraKit.enableVideo() // - enable video
         agoraKit.setVideoSource(self.arVideoSource) // - set the video source to the custom AR source
-        agoraKit.enableExternalAudioSource(withSampleRate: audioSampleRate, channelsPerFrame: audioChannelsPerFrame) // - enable external audio souce (since video and audio are coming from seperate sources)
+//        agoraKit.enableExternalAudioSource(withSampleRate: audioSampleRate, channelsPerFrame: audioChannelsPerFrame) // - enable external audio souce (since video and audio are coming from seperate sources)
         agoraKit.enableWebSdkInteroperability(true)
         self.agoraKit = agoraKit // set a reference to the Agora engine
 
@@ -134,11 +134,12 @@ open class ARBroadcaster: UIViewController {
         // Configure the renderer to always render the scene
         self.arvkRenderer?.onlyRenderWhileRecording = false
         // Configure ARKit content mode. Default is .auto
-        self.arvkRenderer?.contentMode = .aspectFit
+        self.arvkRenderer?.contentMode = .aspectFill
         // add environment light during rendering
         self.arvkRenderer?.enableAdjustEnvironmentLighting = lightEstimation
         // Set the UIViewController orientations
         self.arvkRenderer?.inputViewOrientations = [.portrait]
+        self.arvkRenderer?.enableAudio = false
         // TODO: create enum to translate between Agora Orientation and ARVideoKit
 
         if debug {
@@ -157,16 +158,7 @@ open class ARBroadcaster: UIViewController {
     override open func viewWillAppear(_ animated: Bool) {
         super .viewWillAppear(animated)
         print("viewWillAppear")        // Configure ARKit Session
-        let configuration = ARWorldTrackingConfiguration()
-        if let planeDetection = self.planeDetection {
-            configuration.planeDetection = planeDetection
-        }
-        // TODO: Enable Audio Data when iPhoneX bug is resolved
-//        configuration.providesAudioData = true  // AR session needs to provide the audio data
-        configuration.isLightEstimationEnabled = lightEstimation
-        // run the config to start the ARSession
-        self.sceneView.session.run(configuration)
-        self.arvkRenderer?.prepare(configuration)
+
     }
     
     /**
@@ -178,6 +170,7 @@ open class ARBroadcaster: UIViewController {
         if AgoraARKit.agoraAppId == nil {
             popView()
         } else {
+            self.setARConfiguration()
             joinChannel() // Agora - join the channel
         }
         
@@ -223,11 +216,7 @@ open class ARBroadcaster: UIViewController {
             self.agoraKit.setDefaultAudioRouteToSpeakerphone(defaultToSpeakerPhone)
         }
         // Join the channel
-        self.agoraKit.joinChannel(byToken: AgoraARKit.agoraToken, channelId: self.channelName, info: nil, uid: 0) { [weak self] (channel, uid, elapsed) in
-            if self!.showLogs {
-              print("Successfully joined: \(channel), with \(uid): \(elapsed) secongs ago")
-          }
-        }
+        self.agoraKit.joinChannel(byToken: AgoraARKit.agoraToken, channelId: self.channelName, info: nil, uid: 0)
         UIApplication.shared.isIdleTimerDisabled = true     // Disable idle timmer
     }
     
@@ -259,12 +248,14 @@ open class ARBroadcaster: UIViewController {
         // add branded logo to view
         if let watermarkImage = self.watermarkImage {
             let watermark = UIImageView(image: watermarkImage)
+            watermark.contentMode = .scaleAspectFit
             if let watermarkFrame = self.watermarkFrame {
                 watermark.frame = watermarkFrame
             } else {
-                watermark.frame = CGRect(x: self.view.bounds.maxX-100, y: self.view.bounds.maxY-100, width: 75, height: 75)
+                watermark.frame = CGRect(x: self.view.frame.maxX-200, y: self.view.frame.maxY-200, width: 150, height: 150)
             }
             watermark.alpha = watermarkAlpha
+            self.view.insertSubview(watermark, at: 2)
             self.watermark = watermark
         }
 
@@ -299,6 +290,19 @@ open class ARBroadcaster: UIViewController {
         }
         backBtn.addTarget(self, action: #selector(popView), for: .touchUpInside)
         self.view.insertSubview(backBtn, at: 2)
+    }
+    
+    open func setARConfiguration() {
+        let configuration = ARWorldTrackingConfiguration()
+        if let planeDetection = self.planeDetection {
+            configuration.planeDetection = planeDetection
+        }
+        // TODO: Enable Audio Data when iPhoneX bug is resolved
+//        configuration.providesAudioData = true  // AR session needs to provide the audio data
+        configuration.isLightEstimationEnabled = lightEstimation
+        // run the config to start the ARSession
+        self.sceneView.session.run(configuration)
+        self.arvkRenderer?.prepare(configuration)
     }
     
     // MARK: Button Events
