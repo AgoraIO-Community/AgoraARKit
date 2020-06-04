@@ -49,12 +49,12 @@ To get started with the AgoraARVideoKit, please follow the steps below to
 
 ### Implementation
 1. once you have imported the AgoraARKit and its dependancies, open your `ViewController.swift` and add:
-```
+```Swift
 import AgoraARKit
 ```
 
 2. Next set your `ViewController` class to inherit from `AgoraLobbyVC` and set your Agora App Id with the `loadView` method. If you want to set a custom image for the Lobby view, set it using the `bannerImage` property.
-```
+```Swift
 override func loadView() {
     super.loadView()
     
@@ -75,7 +75,7 @@ The AgoraARKit classes are extendtable so you can subclass them to customize the
 Since we are already inheriting from the `AgoraLobbyVC`, let's `override` the `joinSession` and `createSession` methods within our `ViewController` to set the images for the audience and broadcaster views.
 
 Custom images in Audience view
-```
+```Swift
 @IBAction override func joinSession() {
     if let channelName = self.userInput.text {
         if channelName != "" {
@@ -95,7 +95,7 @@ Custom images in Audience view
 ```
 
 Custom images in Broadcaster view
-```
+```Swift
 @IBAction override func createSession() {
     if let channelName = self.userInput.text {
         if channelName != "" {
@@ -127,7 +127,7 @@ The ARBroadcaster is a UIViewController that implements the ARKit Session and Re
 
 The current `ARBroadcaster` class is setup for `WorldTracking`, but this can be easily updated to front facing. Below is an example of the `ARBroadcaster` extended for ARKit `FaceTracking` and also adds support for multiple broadcasters.
 
-```
+```Swift
 import ARKit
 
 class FaceBroadcaster : ARBroadcaster {
