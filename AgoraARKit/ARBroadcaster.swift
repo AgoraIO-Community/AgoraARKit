@@ -54,7 +54,7 @@ open class ARBroadcaster: UIViewController {
     var arVideoSource: ARVideoSource = ARVideoSource()  // for passing the AR camera as the stream
     public var channelProfile: AgoraChannelProfile = .liveBroadcasting
     public var frameRate: AgoraVideoFrameRate = .fps30
-    public var videoDimension: CGSize = AgoraVideoDimension1280x720
+    public var videoDimension: CGSize = AgoraVideoDimension840x480
     public var videoBitRate: Int = AgoraVideoBitrateStandard
     public var videoOutputOrientationMode: AgoraVideoOutputOrientationMode = .fixedPortrait
     public var audioSampleRate: UInt = 44100
@@ -121,11 +121,10 @@ open class ARBroadcaster: UIViewController {
             agoraKit.setClientRole(.broadcaster)
         }
         let videoConfig = AgoraVideoEncoderConfiguration(size: videoDimension, frameRate: frameRate, bitrate: videoBitRate, orientationMode: videoOutputOrientationMode)
-        agoraKit.setVideoEncoderConfiguration(videoConfig) // - set video encoding configuration (dimensions, frame-rate, bitrate, orientation
         agoraKit.enableVideo() // - enable video
         agoraKit.setVideoSource(self.arVideoSource) // - set the video source to the custom AR source
+        agoraKit.setVideoEncoderConfiguration(videoConfig) // - set video encoding configuration (dimensions, frame-rate, bitrate, orientation
 //        agoraKit.enableExternalAudioSource(withSampleRate: audioSampleRate, channelsPerFrame: audioChannelsPerFrame) // - enable external audio souce (since video and audio are coming from seperate sources)
-        agoraKit.enableWebSdkInteroperability(true)
         self.agoraKit = agoraKit // set a reference to the Agora engine
 
         // set render delegate
