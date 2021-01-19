@@ -8,12 +8,16 @@
 //
 
 import UIKit
-import AgoraRtcEngineKit
+import AgoraRtcKit
 
 /**
  A custom video source for the AgoraRtcEngine. This class conforms to the AgoraVideoSourceProtocol and is used to pass the AR pixel buffer as a video source of the Agora stream.
  */
 class ARVideoSource: NSObject, AgoraVideoSourceProtocol {
+    func captureType() -> AgoraVideoCaptureType { .camera }
+
+    func contentHint() -> AgoraVideoContentHint { .none }
+
     
     var consumer: AgoraVideoFrameConsumer?
     var rotation: AgoraVideoRotation = .rotationNone

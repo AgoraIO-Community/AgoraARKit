@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import AgoraRtcEngineKit
+import AgoraRtcKit
 
 class Broadcaster : UIViewController, AgoraRtcEngineDelegate {
     

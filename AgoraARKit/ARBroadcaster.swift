@@ -8,7 +8,7 @@
 
 import UIKit
 import ARKit
-import AgoraRtcEngineKit
+import AgoraRtcKit
 import ARVideoKit
 import Foundation
 
