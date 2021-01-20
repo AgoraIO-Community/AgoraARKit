@@ -18,22 +18,21 @@ class ARVideoSource: NSObject, AgoraVideoSourceProtocol {
 
     func contentHint() -> AgoraVideoContentHint { .none }
 
-    
     var consumer: AgoraVideoFrameConsumer?
     var rotation: AgoraVideoRotation = .rotationNone
-    
+
     func shouldInitialize() -> Bool { return true }
-    
+
     func shouldStart() { }
-    
+
     func shouldStop() { }
-    
+
     func shouldDispose() { }
-    
+
     func bufferType() -> AgoraVideoBufferType {
         return .pixelBuffer
     }
-    
+
     func sendBuffer(_ buffer: CVPixelBuffer, timestamp: TimeInterval) {
         let time = CMTime(seconds: timestamp, preferredTimescale: 1000)
         consumer?.consumePixelBuffer(buffer, withTimestamp: time, rotation: rotation)

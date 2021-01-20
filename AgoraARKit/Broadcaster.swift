@@ -9,17 +9,17 @@
 import UIKit
 import AgoraRtcKit
 
-class Broadcaster : UIViewController, AgoraRtcEngineDelegate {
-    
+class Broadcaster: UIViewController, AgoraRtcEngineDelegate {
+
     var agoraKit: AgoraRtcEngineKit!        // Agora.io Video Engine reference
     public var channelName: String!                // name of the channel to join
-    
+
     public var localVideoView: UIView!             // video stream of local camera
-    public var remoteVideoViews: [UInt:UIView] = [:]
-    
+    public var remoteVideoViews: [UInt: UIView] = [:]
+
     var dataStreamId: Int! = 27                         // id for data stream
     var streamIsEnabled: Int32 = -1                     // acts as a flag to keep track if the data stream is enabled
-    
+
     // MARK: UI properties
     public var micBtn: UIButton!
     public var micBtnFrame: CGRect?
@@ -27,14 +27,14 @@ class Broadcaster : UIViewController, AgoraRtcEngineDelegate {
     public var micBtnTextLabel: String = "un-mute"
     public var muteBtnImage: UIImage?
     public var muteBtnTextLabel: String = "mute"
-    
+
     public var backBtn: UIButton!
     public var backBtnFrame: CGRect?
     public var backBtnImage: UIImage?
     public var backBtnTextLabel: String = "x"
-    
+
     public var debug = true
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Add Agora setup
@@ -43,36 +43,36 @@ class Broadcaster : UIViewController, AgoraRtcEngineDelegate {
         agoraKit.setChannelProfile(.liveBroadcasting) // - set channel profile
         agoraKit.setClientRole(.broadcaster)
         self.agoraKit = agoraKit
-        
+
         createUI()
         setupLocalVideo()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         joinChannel()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         // do something when the view has appeared
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        leaveChannel();
+        leaveChannel()
     }
-    
+
     // MARK: UI
     func createUI() {
-        
+
         // add remote video view
         let localVideoView = UIView()
         localVideoView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
         localVideoView.backgroundColor = UIColor.lightGray
         self.view.insertSubview(localVideoView, at: 0)
         self.localVideoView = localVideoView
-        
+
         // mic button
         let micBtn = UIButton()
         if let micBtnFrame = self.micBtnFrame {
@@ -80,7 +80,7 @@ class Broadcaster : UIViewController, AgoraRtcEngineDelegate {
         } else {
             micBtn.frame = CGRect(x: self.view.frame.midX-37.5, y: self.view.frame.maxY-100, width: 75, height: 75)
         }
-        
+
         if let micBtnImage = self.micBtnImage {
             micBtn.setImage(micBtnImage, for: .normal)
         } else {
@@ -104,11 +104,14 @@ class Broadcaster : UIViewController, AgoraRtcEngineDelegate {
         }
         backBtn.addTarget(self, action: #selector(popView), for: .touchUpInside)
         self.view.insertSubview(backBtn, at: 2)
-        
+
         // add branded logo to remote view
         guard let agoraLogo = UIImage(named: "arlene-brandmark") else { return }
         let remoteViewBagroundImage = UIImageView(image: agoraLogo)
-        remoteViewBagroundImage.frame = CGRect(x: localVideoView.frame.midX-56.5, y: localVideoView.frame.midY-100, width: 117, height: 126)
+        remoteViewBagroundImage.frame = CGRect(
+            x: localVideoView.frame.midX - 56.5, y: localVideoView.frame.midY - 100,
+            width: 117, height: 126
+        )
         remoteViewBagroundImage.alpha = 0.25
         localVideoView.insertSubview(remoteViewBagroundImage, at: 1)
     }
@@ -148,16 +151,19 @@ class Broadcaster : UIViewController, AgoraRtcEngineDelegate {
             }
         }
     }
-    
+
     // MARK: Agora Implementation
     func setupLocalVideo() {
         guard let localVideoView = self.localVideoView else { return }
-       
+
         // enable the local video stream
         self.agoraKit.enableVideo()
-        
+
         // Set video configuration
-        let videoConfig = AgoraVideoEncoderConfiguration(size: AgoraVideoDimension840x480, frameRate: .fps15, bitrate: AgoraVideoBitrateStandard, orientationMode: .fixedPortrait)
+        let videoConfig = AgoraVideoEncoderConfiguration(
+            size: AgoraVideoDimension840x480, frameRate: .fps15,
+            bitrate: AgoraVideoBitrateStandard, orientationMode: .fixedPortrait
+        )
         self.agoraKit.setVideoEncoderConfiguration(videoConfig)
         // Set up local video view
         let videoCanvas = AgoraRtcVideoCanvas()
@@ -166,37 +172,42 @@ class Broadcaster : UIViewController, AgoraRtcEngineDelegate {
         videoCanvas.renderMode = .hidden
         // Set the local video view.
         self.agoraKit.setupLocalVideo(videoCanvas)
-        
+
         guard let videoView = localVideoView.subviews.first else { return }
         videoView.layer.cornerRadius = 25
     }
-    
+
     func joinChannel() {
         // Set audio route to speaker
         self.agoraKit.setDefaultAudioRouteToSpeakerphone(true)
         // get the token - returns nil if no value is set
         let token = AgoraARKit.agoraToken
         // Join the channel
-        self.agoraKit.joinChannel(byToken: token, channelId: self.channelName, info: nil, uid: 0) { (channel, uid, elapsed) in
+        self.agoraKit.joinChannel(
+            byToken: token, channelId: self.channelName, info: nil, uid: 0
+        ) { (channel, uid, elapsed) in
           if self.debug {
               print("Successfully joined: \(channel), with \(uid): \(elapsed) secongs ago")
           }
         }
         UIApplication.shared.isIdleTimerDisabled = true     // Disable idle timmer
     }
-    
+
     func leaveChannel() {
         UIApplication.shared.isIdleTimerDisabled = false    // Enable idle timer
         guard self.agoraKit != nil else { return }
         self.agoraKit.leaveChannel(nil)                     // leave channel and end chat
     }
-    
+
     // MARK: Agora event handler
-    func rtcEngine(_ engine: AgoraRtcEngineKit, remoteVideoStateChangedOfUid uid: UInt, state: AgoraVideoRemoteState, reason: AgoraVideoRemoteStateReason, elapsed: Int) {
+    func rtcEngine(
+        _ engine: AgoraRtcEngineKit, remoteVideoStateChangedOfUid uid: UInt,
+        state: AgoraVideoRemoteState, reason: AgoraVideoRemoteStateReason, elapsed: Int
+    ) {
         if state == .starting {
-            lprint("firstRemoteVideoStarting for Uid: \(uid)", .Verbose)
+            lprint("firstRemoteVideoStarting for Uid: \(uid)", .verbose)
         } else if state == .decoding {
-            lprint("firstRemoteVideoDecoded for Uid: \(uid)", .Verbose)
+            lprint("firstRemoteVideoDecoded for Uid: \(uid)", .verbose)
             var remoteView: UIView
             if let existingRemoteView = self.remoteVideoViews[uid] {
                 remoteView = existingRemoteView
@@ -226,6 +237,5 @@ class Broadcaster : UIViewController, AgoraRtcEngineDelegate {
         self.remoteVideoViews.removeValue(forKey: uid) // remove the remote view from the dictionary
         adjustRemoteViews(remoteViews: self.remoteVideoViews, view: self.view)
     }
-
 
 }
