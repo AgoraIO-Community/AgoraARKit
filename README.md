@@ -15,7 +15,7 @@ AgoraARKit requires a minimum version of iOS 12.2, and supports the following de
 
 iOS 12.2 can be downloaded from Apple’s Developer website.
 
-## Dependancies
+## Dependencies
 AgoraARKit relies on the [Agora.io Video SDK](https://docs.agora.io/en/Agora%20Platform/downloads) and [ARVideoKit](https://github.com/AFathi/ARVideoKit).
 
 ## Support
@@ -27,18 +27,18 @@ AgoraARKit relies on the [Agora.io Video SDK](https://docs.agora.io/en/Agora%20P
 ## Quick start guide
 To get started with the AgoraARVideoKit, please follow the steps below to 
 
-### Set up using CocoaPods (coming soon)
-> NOTE: CocoaPods is not currently set up _(use Manual Setup below)_
+### Set up using CocoaPods
+
 1. Add to your podfile:
 
-`pod 'AgoraARKit'`
+    `pod 'AgoraARKit'`
 
 
 2. In Terminal, navigate to your project folder, then:
 
-`pod update`
+    `pod update`
 
-`pod install`
+    `pod install`
 
 3. Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` to plist with a brief explanation (see demo project for an example)
 
@@ -47,8 +47,9 @@ To get started with the AgoraARVideoKit, please follow the steps below to
 2. Import [`ARVideoKit`](https://github.com/AFathi/ARVideoKit) and [`Agora.io Video SDK`](https://docs.agora.io/en/Agora%20Platform/downloads) SDKS
 3. Add `NSCameraUsageDescription` and `NSMicrophoneUsageDescription` to plist with a brief explanation (see demo project for an example)
 
-### Implementation
-1. once you have imported the AgoraARKit and its dependancies, open your `ViewController.swift` and add:
+---
+## Implementation
+1. Once you have imported the AgoraARKit and its dependancies, open your `ViewController.swift` and add:
 ```Swift
 import AgoraARKit
 ```
@@ -170,4 +171,4 @@ class FaceBroadcaster : ARBroadcaster {
     }
 }
 ```
-...
+---
