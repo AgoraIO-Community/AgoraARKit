@@ -1,4 +1,13 @@
-# AgoraARKit
+# [ARCHIVED] AgoraARKit
+
+**⚠️ This project is no longer maintained and has been archived.**  
+Please note that this repository is now in a read-only state and will not receive any further updates or support.
+
+We recommend using to the latest version of the **Agora iOS SDK**: [Learn more](https://www.agora.io/en/products/video-call/) 
+
+For documentation and support, please visit the [Agora Documentation](https://docs.agora.io/en/).
+
+--- 
 Enabling apps to live stream AR video streams. **[ARKit](https://developer.apple.com/augmented-reality/)**, uses the device's camera and motion sensors to project virtual conetent into a user's world. **Agora.io**, provides a [video SDK](https://docs.agora.io/en/Video/product_video?platform=All%20Platforms) for building real-time video and audio communications applications. By combining Agora.io's Video SDK and ARKit, it enables developers to create many different applications across many different use-cases. 
 
 This library provides three classes with managed user itnterfaces:
